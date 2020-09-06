@@ -1,6 +1,7 @@
 import pygame as pg
 import sys
 import math
+from grid import gridWrapper
 pg.init()
 pg.display.set_caption("Battleship")
 clock=pg.time.Clock()
@@ -18,28 +19,7 @@ miss = pg.transform.scale(miss, (SQUARE_SIZE, SQUARE_SIZE))
 WHITE = [255,255,255]
 BLACK = [0,0,0]
 RED = [255,0,0]
-grid = [
-    ["Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open"],
-    ["Open", "Miss", "hitShip", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open"],
-    ["Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open"],
-    ["Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open"],
-    ["Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open"],
-    ["Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open"],
-    ["Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open"],
-    ["Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open"],
-    ["Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open"],
-    ["Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open"],
-    ["Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open"],
-    ["Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open"],
-    ["Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open"],
-    ["Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open"],
-    ["Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open"],
-    ["Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open"],
-    ["Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open"],
-    ["Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open"],
-    ["Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open"],
-    ["Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open", "Open"]
-]
+gridW = gridWrapper()
 
 def draw():
     screen.blit(bg, (0,0))
@@ -47,14 +27,14 @@ def draw():
         for j in range(20):
             pg.draw.line(screen, BLACK, (j * SQUARE_SIZE, 0), (j * SQUARE_SIZE, WIN_Y), 1)
         pg.draw.line(screen, BLACK, (0, i * SQUARE_SIZE), (WIN_X, i * SQUARE_SIZE), 1)
-    for i in range(len(grid)):
-        for j in range(len(grid[0])):
-            if grid[i][j] == "Ship":
+    for i in range(len(gridW.grid)):
+        for j in range(len(gridW.grid[0])):
+            if gridW.grid[i][j] == "Ship":
                 pg.draw.rect(screen, RED, (j * SQUARE_SIZE, i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
-            elif grid[i][j] == "hitShip":
+            elif gridW.grid[i][j] == "hitShip":
                 screen.blit(hit, (j * SQUARE_SIZE, i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
                 #pg.draw.rect(screen, [0,255,0], (j * SQUARE_SIZE, i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
-            elif grid[i][j] == "Miss":
+            elif gridW.grid[i][j] == "Miss":
                 screen.blit(miss, (j * SQUARE_SIZE, i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
                 #pg.draw.rect(screen, BLACK, (j * SQUARE_SIZE, i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
     pg.draw.line(screen, BLACK, (10 * SQUARE_SIZE, 0), (10 * SQUARE_SIZE, WIN_Y), 5) #Vertical Seperator
@@ -91,7 +71,6 @@ def main():
                         dirVec[1] = 1
                         print("up")
             if event.type == pg.MOUSEBUTTONDOWN:
-                #print (grid)
                 Pressed=pg.mouse.get_pos()
                 effectiveX = math.floor(Pressed[0]/(WIN_Y/20))
                 effectiveY = math.floor(Pressed[1]/(WIN_Y/20))
@@ -99,28 +78,28 @@ def main():
                 #Place ships
                 if placing and placedShips < 5:
                     if effectiveY >= 10 and effectiveX < 10:
-                        if grid[effectiveY][effectiveX] != "Ship":
+                        if gridW.grid[effectiveY][effectiveX] != "Ship":
                             validShip = True
                             for i in range(lenShip):
-                                if ((effectiveY + dirVec[1] * i >= 20) or (effectiveY + dirVec[1] * i < 10) or (effectiveX + dirVec[0] * i >= 10) or (effectiveX + dirVec[0] * i < 0) or (grid[effectiveY + dirVec[1] * i][effectiveX + dirVec[0] * i] != "Open")):
+                                if ((effectiveY + dirVec[1] * i >= 20) or (effectiveY + dirVec[1] * i < 10) or (effectiveX + dirVec[0] * i >= 10) or (effectiveX + dirVec[0] * i < 0) or (gridW.grid[effectiveY + dirVec[1] * i][effectiveX + dirVec[0] * i] != "Open")):
                                     validShip = False
                             if validShip:
                                 for i in range(lenShip):
-                                    grid[effectiveY + dirVec[1] * i][effectiveX + dirVec[0] * i] = "Ship"
+                                    gridW.grid[effectiveY + dirVec[1] * i][effectiveX + dirVec[0] * i] = "Ship"
                                 lenShip += 1
                                 placedShips += 1
                             else:
                                 print("Invalid Ship!")
                 elif placing:
                     if effectiveY >= 10 and effectiveX >= 10:
-                        if grid[effectiveY][effectiveX] != "Ship":
+                        if gridW.grid[effectiveY][effectiveX] != "Ship":
                             validShip = True
                             for i in range(lenShip - 5):
-                                if ((effectiveY + dirVec[1] * i >= 20) or (effectiveY + dirVec[1] * i < 10) or (effectiveX + dirVec[0] * i < 10) or (effectiveX + dirVec[0] * i >= 20) or (grid[effectiveY + dirVec[1] * i][effectiveX + dirVec[0] * i] != "Open")):
+                                if ((effectiveY + dirVec[1] * i >= 20) or (effectiveY + dirVec[1] * i < 10) or (effectiveX + dirVec[0] * i < 10) or (effectiveX + dirVec[0] * i >= 20) or (gridW.grid[effectiveY + dirVec[1] * i][effectiveX + dirVec[0] * i] != "Open")):
                                     validShip = False
                             if validShip:
                                 for i in range(lenShip - 5):
-                                    grid[effectiveY + dirVec[1] * i][effectiveX + dirVec[0] * i] = "Ship"
+                                    gridW.grid[effectiveY + dirVec[1] * i][effectiveX + dirVec[0] * i] = "Ship"
                                 lenShip += 1
                                 placedShips += 1
                             else:
