@@ -189,8 +189,12 @@ class Battleship:
                         #if all ships have been placed, player two is done placing
                         if placedShips >= self.numShipsPerPlayer * 2:
                             P2Placing = False
-                    #else:
-                        #Shoot for ships
+                    else:
+                        mousePos = pg.mouse.get_pos()
+                        shootX = math.floor(mousePos[0]/(c.WIN_Y/20))
+                        shootY = math.floor(mousePos[1]/(c.WIN_Y/20))
+                        self.gridW.__shoot__(shootY,shootX)
+
             #update the screen for this frame
             self.draw(P1Placing, P2Placing)
             #advance the while loop at increments of 60FPS
