@@ -10,18 +10,18 @@ class gridWrapper:
         if x >= 1 and x <= 9:
             if self.grid[y-10][x+10] == "Ship":
                 self.grid[y][x] = "hit"
-                print("hit ship")            
+                #print("hit ship")            
             else:
                 self.grid[y][x] = "miss"
-                print("You Missed")
+                #print("You Missed")
 
         
         elif x >= 10 and y <= 20:
             if self.grid[y-10][x-10] == "Ship":
                 self.grid[y][x] = "hit"
-                print("hit ship")
+                #print("hit ship")
             else:
                 self.grid[y][x] = "miss"
-                print("You Missed")
+                #print("You Missed")
 
     #def checkWinner(self)

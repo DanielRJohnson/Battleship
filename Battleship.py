@@ -2,11 +2,16 @@ import pygame as pg
 import sys
 import math
 from grid import gridWrapper
+from ship import Ship, ShipNode
 import constants as c
 class Battleship:
     def __init__(self):
         #initialize pygame
         pg.init()
+        #
+        pg.mixer.init(frequency = 44100, size = -16, channels = 1, buffer = 2**12)
+        self.channel1 = pg.mixer.Channel(0)
+        self.channel2 = pg.mixer.Channel(1)
         #set the name of the window
         pg.display.set_caption("Battleship")
         #get the number of ships per player, and protect from bad input
@@ -32,6 +37,10 @@ class Battleship:
         self.bg = pg.transform.scale(pg.image.load("background-day.jpg"), (c.WIN_X, c.WIN_Y))
         self.hit = pg.transform.scale(pg.image.load("redX.png"), (c.SQUARE_SIZE, c.SQUARE_SIZE))
         self.miss = pg.transform.scale(pg.image.load("blackX.png"), (c.SQUARE_SIZE, c.SQUARE_SIZE))
+        #sound for a ship sinking
+        self.sunk_sound = pg.mixer.Sound("sunk.wav")
+        #sound for a ship being hit
+        self.hit_sound = pg.mixer.Sound("hit.wav")
         #initialize font object for the axis labels
         self.font = pg.font.Font('freesansbold.ttf', 44)
         #Direction vector for rotating when placing ships 
@@ -46,19 +55,19 @@ class Battleship:
         if self.shipDirectionVector[0] == 0 and self.shipDirectionVector[1] == 1:
             self.shipDirectionVector[0] = -1
             self.shipDirectionVector[1] = 0
-            print("left")
+            #print("left")
         elif self.shipDirectionVector[0] == -1 and self.shipDirectionVector[1] == 0:
             self.shipDirectionVector[0] = 0
             self.shipDirectionVector[1] = -1
-            print("up")
+            #print("up")
         elif self.shipDirectionVector[0] == 0 and self.shipDirectionVector[1] == -1:
             self.shipDirectionVector[0] = 1
             self.shipDirectionVector[1] = 0
-            print("right")
+            #print("right")
         elif self.shipDirectionVector[0] == 1 and self.shipDirectionVector[1] == 0:
             self.shipDirectionVector[0] = 0
             self.shipDirectionVector[1] = 1
-            print("down")
+            #print("down")
 
     def draw(self, P1Placing, P2Placing):
         #draw the background
@@ -136,15 +145,27 @@ class Battleship:
             valid = False
         return valid
 
-    def placeShip(self, effectiveX, effectiveY):
+    def placeShip(self, effectiveX, effectiveY, P1Placing, P2Placing, ship):
         #loop through all "ship squares" and place them on the grid
         for i in range(self.lenShip):
-            self.gridW.grid[effectiveY + self.shipDirectionVector[1] * i][effectiveX + self.shipDirectionVector[0] * i] = "Ship"
+            squareX = effectiveX + self.shipDirectionVector[0] * i
+            squareY = effectiveY + self.shipDirectionVector[1] * i
+            self.gridW.grid[squareY][squareX] = "Ship"
+            if P1Placing:
+                ship.addSquare(squareX + 10, squareY - 10)
+            elif P2Placing:
+                ship.addSquare(squareX - 10, squareY - 10)
+            else:
+                print("Neither player is placing!")
 
     def run(self):
         P1Placing = True
         P2Placing = False
+        P1Shooting = False
+        p2Shooting = False
         placedShips = 0
+        p1Ships = []
+        p2Ships = []
         #game loop
         while 1:
             #loop through all events
@@ -166,7 +187,9 @@ class Battleship:
                     #if player one is placing, place the ship if it is valid
                     if P1Placing:
                         if self.checkValidShip(P1Placing, P2Placing, effectiveX, effectiveY):
-                            self.placeShip(effectiveX, effectiveY)
+                            tempShip = Ship()
+                            self.placeShip(effectiveX, effectiveY, P1Placing, P2Placing, tempShip)
+                            p1Ships.append(tempShip)
                             self.lenShip += 1
                             placedShips += 1
                             #if player one finishes placing, reset things for player two's turn
@@ -181,7 +204,9 @@ class Battleship:
                     #if player two is placing, place the ship if it is valid
                     elif P2Placing:
                         if self.checkValidShip(P1Placing, P2Placing, effectiveX, effectiveY):
-                            self.placeShip(effectiveX, effectiveY)
+                            tempShip = Ship()
+                            self.placeShip(effectiveX, effectiveY, P1Placing, P2Placing, tempShip)
+                            p2Ships.append(tempShip)
                             self.lenShip += 1
                             placedShips += 1
                         else:
@@ -189,12 +214,41 @@ class Battleship:
                         #if all ships have been placed, player two is done placing
                         if placedShips >= self.numShipsPerPlayer * 2:
                             P2Placing = False
-                    else:
-                        mousePos = pg.mouse.get_pos()
-                        shootX = math.floor(mousePos[0]/(c.WIN_Y/20))
-                        shootY = math.floor(mousePos[1]/(c.WIN_Y/20))
-                        self.gridW.__shoot__(shootY,shootX)
-
+                            P1Shooting = True
+                    elif P1Shooting:
+                        #if the bounds are valid, shoot the square, then if a ship has said square, mark it as hit. 
+                        #then, if the ship is sunk for the first time, print a message and play a sound
+                        if effectiveY > 0 and effectiveY < 10 and effectiveX > 0 and effectiveX < 10 and self.gridW.grid[effectiveY][effectiveX] == "Open":
+                            self.gridW.__shoot__(effectiveY, effectiveX)
+                            P1Shooting = False
+                            P2Shooting = True
+                            for ship in p2Ships:
+                                for square in ship.shipSquares:
+                                    if square.x == effectiveX and square.y == effectiveY:
+                                        self.channel1.play(self.hit_sound)
+                                        square.hit = True
+                                if ship.sunk == False and ship.checkSunk():
+                                    self.channel2.play(self.sunk_sound)
+                                    print("Ship Sunk!")
+                        else:
+                            print("P1: Invalid space!")
+                    elif P2Shooting:
+                        #if the bounds are valid, shoot the square, then if a ship has said square, mark it as hit. 
+                        #then, if the ship is sunk for the first time, print a message and play a sound
+                        if effectiveY > 0 and effectiveY < 10 and effectiveX > 10 and effectiveX <= 20 and self.gridW.grid[effectiveY][effectiveX] == "Open":
+                            self.gridW.__shoot__(effectiveY, effectiveX)
+                            P2Shooting = False
+                            P1Shooting = True
+                            for ship in p1Ships:
+                                for square in ship.shipSquares:
+                                    if square.x == effectiveX and square.y == effectiveY:
+                                        self.channel1.play(self.hit_sound)
+                                        square.hit = True
+                                if ship.sunk == False and ship.checkSunk():
+                                    self.channel2.play(self.sunk_sound)
+                                    print("Ship Sunk!")
+                        else:
+                            print("P2: Invalid space!")
             #update the screen for this frame
             self.draw(P1Placing, P2Placing)
             #advance the while loop at increments of 60FPS
