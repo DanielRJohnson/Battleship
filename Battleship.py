@@ -6,9 +6,11 @@ from ship import Ship, ShipNode
 import constants as c
 class Battleship:
     def __init__(self):
+        #display welcome message
+        print("\n=====================================\nWelcome to Battleship made by Team 14\n=====================================\n")
         #initialize pygame
         pg.init()
-        #
+        #set up the mixer to play sounds in two channels, so sink sound and hit sound can happen at the same time
         pg.mixer.init(frequency = 44100, size = -16, channels = 1, buffer = 2**12)
         self.channel1 = pg.mixer.Channel(0)
         self.channel2 = pg.mixer.Channel(1)
@@ -77,9 +79,12 @@ class Battleship:
             for j in range(len(self.gridW.grid[0])):
                 #draw vertical line on grid
                 pg.draw.line(self.screen, c.BLACK, (j * c.SQUARE_SIZE, 0), (j * c.SQUARE_SIZE, c.WIN_Y), 1)
-                #if the square is a ship, draw the ship
+                #if the square is a ship, draw the ship only when that player is placing
                 if self.gridW.grid[i][j] == "Ship":
-                    pg.draw.rect(self.screen, c.RED, (j * c.SQUARE_SIZE, i * c.SQUARE_SIZE, c.SQUARE_SIZE, c.SQUARE_SIZE))
+                    if P1Placing and i > 10 and j < 10:
+                        pg.draw.rect(self.screen, c.RED, (j * c.SQUARE_SIZE, i * c.SQUARE_SIZE, c.SQUARE_SIZE, c.SQUARE_SIZE))
+                    elif P2Placing and i > 10 and j > 10:
+                        pg.draw.rect(self.screen, c.RED, (j * c.SQUARE_SIZE, i * c.SQUARE_SIZE, c.SQUARE_SIZE, c.SQUARE_SIZE))
                 #if the square is a hit, draw the hit
                 elif self.gridW.grid[i][j] == "hit":
                     self.screen.blit(self.hit, (j * c.SQUARE_SIZE, i * c.SQUARE_SIZE, c.SQUARE_SIZE, c.SQUARE_SIZE))
@@ -166,6 +171,7 @@ class Battleship:
         placedShips = 0
         p1Ships = []
         p2Ships = []
+        print("\n===========================================\nPlayer 1 is now placing, look away player 2\nYou can press 'R' to rotate!\n===========================================\n")
         #game loop
         while 1:
             #loop through all events
@@ -194,6 +200,7 @@ class Battleship:
                             placedShips += 1
                             #if player one finishes placing, reset things for player two's turn
                             if placedShips == self.numShipsPerPlayer:
+                                print("\n===========================================\nPlayer 2 is now placing, look away player 1\nYou can press 'R' to rotate!\n===========================================\n")
                                 self.shipDirectionVector[0] = 0
                                 self.shipDirectionVector[1] = 1
                                 P1Placing = False
@@ -215,6 +222,7 @@ class Battleship:
                         if placedShips >= self.numShipsPerPlayer * 2:
                             P2Placing = False
                             P1Shooting = True
+                            print("\n=========================================================\nBoth players have placed their ships. Take turns shooting\n=========================================================\n")
                     elif P1Shooting:
                         #if the bounds are valid, shoot the square, then if a ship has said square, mark it as hit. 
                         #then, if the ship is sunk for the first time, print a message and play a sound
@@ -229,7 +237,7 @@ class Battleship:
                                         square.hit = True
                                 if ship.sunk == False and ship.checkSunk():
                                     self.channel2.play(self.sunk_sound)
-                                    print("Ship Sunk!")
+                                    print("\n=====================\nPlayer 1 sunk a ship!\n=====================\n")
                         else:
                             print("P1: Invalid space!")
                     elif P2Shooting:
@@ -246,7 +254,7 @@ class Battleship:
                                         square.hit = True
                                 if ship.sunk == False and ship.checkSunk():
                                     self.channel2.play(self.sunk_sound)
-                                    print("Ship Sunk!")
+                                    print("\n=====================\nPlayer 2 sunk a ship!\n=====================\n")
                         else:
                             print("P2: Invalid space!")
             #update the screen for this frame
