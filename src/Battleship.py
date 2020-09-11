@@ -1,9 +1,9 @@
 import pygame as pg
 import sys
 import math
-from grid import gridWrapper
-from ship import Ship, ShipNode
-import constants as c
+from src.grid import gridWrapper
+from src.ship import Ship, ShipNode
+import src.constants as c
 class Battleship:
     def __init__(self):
         #display welcome message
@@ -36,13 +36,13 @@ class Battleship:
         #initialize the clock to control framerate
         self.clock = pg.time.Clock()
         #load the images and scale them accordingly
-        self.bg = pg.transform.scale(pg.image.load("background-day.jpg"), (c.WIN_X, c.WIN_Y))
-        self.hit = pg.transform.scale(pg.image.load("redX.png"), (c.SQUARE_SIZE, c.SQUARE_SIZE))
-        self.miss = pg.transform.scale(pg.image.load("blackX.png"), (c.SQUARE_SIZE, c.SQUARE_SIZE))
+        self.bg = pg.transform.scale(pg.image.load("media/background-day.jpg"), (c.WIN_X, c.WIN_Y))
+        self.hit = pg.transform.scale(pg.image.load("media/redX.png"), (c.SQUARE_SIZE, c.SQUARE_SIZE))
+        self.miss = pg.transform.scale(pg.image.load("media/blackX.png"), (c.SQUARE_SIZE, c.SQUARE_SIZE))
         #sound for a ship sinking
-        self.sunk_sound = pg.mixer.Sound("sunk.wav")
+        self.sunk_sound = pg.mixer.Sound("media/sunk.wav")
         #sound for a ship being hit
-        self.hit_sound = pg.mixer.Sound("hit.wav")
+        self.hit_sound = pg.mixer.Sound("media/hit.wav")
         #initialize font object for the axis labels
         self.font = pg.font.Font('freesansbold.ttf', 44)
         #Direction vector for rotating when placing ships 
@@ -257,7 +257,7 @@ class Battleship:
                                     print("\n=====================\nPlayer 2 sunk a ship!\n=====================\n")
                         else:
                             print("P2: Invalid space!")
-            #
+            #If the game ends, break the loop and finish the program
             if self.gridW.__winner__(self.numShipsPerPlayer) == True:
                 break
             #update the screen for this frame

@@ -1,4 +1,4 @@
-import constants as c
+import src.constants as c
 class gridWrapper:
     def __init__(self):
         self.grid = []
@@ -59,9 +59,9 @@ class gridWrapper:
             p2_count=5
 
         if p1_count == win_count:
-            print("\n=====================\nPlayer 1 wins!\n=====================\n")
+            print("\n==============\nPlayer 1 wins!\n==============\n")
             return True
         
         if p2_count == win_count:
-            print("\n=====================\nPlayer 2 wins!\n=====================\n")
+            print("\n==============\nPlayer 2 wins!\n==============\n")
             return True

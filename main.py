@@ -1,4 +1,4 @@
-from Battleship import Battleship
+from src.Battleship import Battleship
 def main():
     BShip = Battleship()
     BShip.run()
