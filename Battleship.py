@@ -257,6 +257,9 @@ class Battleship:
                                     print("\n=====================\nPlayer 2 sunk a ship!\n=====================\n")
                         else:
                             print("P2: Invalid space!")
+            #
+            if self.gridW.__winner__(self.numShipsPerPlayer) == True:
+                break
             #update the screen for this frame
             self.draw(P1Placing, P2Placing)
             #advance the while loop at increments of 60FPS
