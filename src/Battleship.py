@@ -6,6 +6,14 @@ from src.ship import Ship, ShipNode
 import src.constants as c
 class Battleship:
     def __init__(self):
+
+        """
+        @pre none
+        @post Battleship class is created and is ready to be run
+        @param none
+        @author Daniel and Saher
+        """
+
         #display welcome message
         print("\n=====================================\nWelcome to Battleship made by Team 14\n=====================================\n")
         #initialize pygame
@@ -33,6 +41,10 @@ class Battleship:
                 break
         #initialize the screen
         self.screen=pg.display.set_mode((c.WIN_X,c.WIN_Y))
+        #
+        self.boardHighlight = pg.Surface((int(c.WIN_X / 2), int(c.WIN_Y / 2)))
+        self.boardHighlight.set_alpha(99)
+        self.boardHighlight.fill(c.RED)
         #initialize the clock to control framerate
         self.clock = pg.time.Clock()
         #load the images and scale them accordingly
@@ -53,6 +65,13 @@ class Battleship:
         self.gridW = gridWrapper()
 
     def rotateDirVec(self):
+
+        """
+        @pre none
+        @post rotates the direction vector for placing ships clockwise
+        @author Daniel
+        """
+
         #rotate the direction vector clockwise
         if self.shipDirectionVector[0] == 0 and self.shipDirectionVector[1] == 1:
             self.shipDirectionVector[0] = -1
@@ -71,7 +90,15 @@ class Battleship:
             self.shipDirectionVector[1] = 1
             #print("down")
 
-    def draw(self, P1Placing, P2Placing):
+    def draw(self, P1Placing, P2Placing, P1Shooting, P2Shooting):
+
+        """
+        @pre game is running
+        @post The screen is updated for the next frame
+        @param P1/P2Placing indicate if either player is placing. P1/P2Shooting indicates if either player is placing.
+        @author Daniel and Saher
+        """
+
         #draw the background
         self.screen.blit(self.bg, (0,0))
         #loop through all squares on the grid
@@ -105,14 +132,30 @@ class Battleship:
                     self.screen.blit((self.font.render(str(j % 10), True, c.BLACK)), (int(i * c.SQUARE_SIZE + c.SQUARE_SIZE / 4), int(j * c.SQUARE_SIZE)))
             #draw horizontal line on the grid
             pg.draw.line(self.screen, c.BLACK, (0, i * c.SQUARE_SIZE), (c.WIN_X, i * c.SQUARE_SIZE), 1)
-            if P1Placing or P2Placing:
-                #display a mock ship and the direction it's being placed
-                mousePos = pg.mouse.get_pos()
-                pg.draw.line(self.screen, c.RED, (mousePos[0], mousePos[1]), (mousePos[0] + c.SQUARE_SIZE * self.lenShip * self.shipDirectionVector[0], mousePos[1] + (c.SQUARE_SIZE * self.lenShip * self.shipDirectionVector[1])), 10)
+        if P1Placing or P2Placing:
+            #display a mock ship and the direction it's being placed
+            mousePos = pg.mouse.get_pos()
+            pg.draw.line(self.screen, c.RED, (mousePos[0], mousePos[1]), (mousePos[0] + c.SQUARE_SIZE * self.lenShip * self.shipDirectionVector[0], mousePos[1] + (c.SQUARE_SIZE * self.lenShip * self.shipDirectionVector[1])), 10)
+        if P1Placing:
+            self.screen.blit(self.boardHighlight, (0, 10*c.SQUARE_SIZE, 10*c.SQUARE_SIZE, 10*c.SQUARE_SIZE))
+        elif P2Placing:
+            self.screen.blit(self.boardHighlight, (10*c.SQUARE_SIZE, 10*c.SQUARE_SIZE, 10*c.SQUARE_SIZE, 10*c.SQUARE_SIZE))
+        elif P1Shooting:
+            self.screen.blit(self.boardHighlight, (0, 0, 10*c.SQUARE_SIZE, 10*c.SQUARE_SIZE))
+        elif P2Shooting:
+            self.screen.blit(self.boardHighlight, (10*c.SQUARE_SIZE, 0, 10*c.SQUARE_SIZE, 10*c.SQUARE_SIZE))
         #update the display
         pg.display.update()
 
     def checkValidShip(self, P1Placing, P2Placing, effectiveX, effectiveY):
+
+        """
+        @pre game is running, one player is placing
+        @post returns true if that ship placement results in no overslow/index errors/another ship is in the way, else false
+        @param P1/P2Placing indicates which player is placing, effectiveX/Y is the converted mouse input mapped to the grid
+        @author Daniel and Saher
+        """
+
         valid = True
         if P1Placing:
             #loop through all "ship squares"
@@ -151,6 +194,14 @@ class Battleship:
         return valid
 
     def placeShip(self, effectiveX, effectiveY, P1Placing, P2Placing, ship):
+
+        """
+        @pre game is running and one of the players is placing
+        @post ship is placed on grid
+        @param effectiveX/Y are the converted mouse inputs. P1/P2Placing indicates which player's turn it is. Ship is the ship to be placed
+        @author Daniel
+        """
+
         #loop through all "ship squares" and place them on the grid
         for i in range(self.lenShip):
             squareX = effectiveX + self.shipDirectionVector[0] * i
@@ -164,10 +215,17 @@ class Battleship:
                 print("Neither player is placing!")
 
     def run(self):
+
+        """
+        @pre none
+        @post The game starts. The function finishes when the game finishes.
+        @author Saher and Daniel
+        """
+
         P1Placing = True
         P2Placing = False
         P1Shooting = False
-        p2Shooting = False
+        P2Shooting = False
         placedShips = 0
         p1Ships = []
         p2Ships = []
@@ -261,6 +319,6 @@ class Battleship:
             if self.gridW.__winner__(self.numShipsPerPlayer) == True:
                 break
             #update the screen for this frame
-            self.draw(P1Placing, P2Placing)
+            self.draw(P1Placing, P2Placing, P1Shooting, P2Shooting)
             #advance the while loop at increments of 60FPS
             self.clock.tick(60)
