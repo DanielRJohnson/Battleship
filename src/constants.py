@@ -1,5 +1,9 @@
 import string 
 
+"""
+@This file is used to store constant values to be referenced by other modules
+"""
+
 SQUARE_SIZE = 40
 NUM_ROWS = 20
 WIN_X, WIN_Y = SQUARE_SIZE * NUM_ROWS, SQUARE_SIZE * NUM_ROWS
