@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module Battleship</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>Battleship</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cusers%5Cdanie%5Cdesktop%5Cfakebattleship%5Cbattleship.py">c:\users\danie\desktop\fakebattleship\battleship.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="constants.html">constants</a><br>
+</td><td width="25%" valign=top><a href="math.html">math</a><br>
+</td><td width="25%" valign=top><a href="pygame.html">pygame</a><br>
+</td><td width="25%" valign=top><a href="sys.html">sys</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="Battleship.html#Battleship">Battleship</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Battleship">class <strong>Battleship</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Battleship-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>@pre&nbsp;none<br>
+@post&nbsp;<a href="#Battleship">Battleship</a>&nbsp;class&nbsp;is&nbsp;created&nbsp;and&nbsp;is&nbsp;ready&nbsp;to&nbsp;be&nbsp;run<br>
+@param&nbsp;none<br>
+@author&nbsp;Daniel&nbsp;and&nbsp;Saher</tt></dd></dl>
+
+<dl><dt><a name="Battleship-checkValidShip"><strong>checkValidShip</strong></a>(self, P1Placing, P2Placing, effectiveX, effectiveY)</dt><dd><tt>@pre&nbsp;game&nbsp;is&nbsp;running,&nbsp;one&nbsp;player&nbsp;is&nbsp;placing<br>
+@post&nbsp;returns&nbsp;true&nbsp;if&nbsp;that&nbsp;ship&nbsp;placement&nbsp;results&nbsp;in&nbsp;no&nbsp;overslow/index&nbsp;errors/another&nbsp;ship&nbsp;is&nbsp;in&nbsp;the&nbsp;way,&nbsp;else&nbsp;false<br>
+@param&nbsp;P1/P2Placing&nbsp;indicates&nbsp;which&nbsp;player&nbsp;is&nbsp;placing,&nbsp;effectiveX/Y&nbsp;is&nbsp;the&nbsp;converted&nbsp;mouse&nbsp;input&nbsp;mapped&nbsp;to&nbsp;the&nbsp;grid<br>
+@author&nbsp;Daniel&nbsp;and&nbsp;Saher</tt></dd></dl>
+
+<dl><dt><a name="Battleship-draw"><strong>draw</strong></a>(self, P1Placing, P2Placing, P1Shooting, P2Shooting)</dt><dd><tt>@pre&nbsp;game&nbsp;is&nbsp;running<br>
+@post&nbsp;The&nbsp;screen&nbsp;is&nbsp;updated&nbsp;for&nbsp;the&nbsp;next&nbsp;frame<br>
+@param&nbsp;P1/P2Placing&nbsp;indicate&nbsp;if&nbsp;either&nbsp;player&nbsp;is&nbsp;placing.&nbsp;P1/P2Shooting&nbsp;indicates&nbsp;if&nbsp;either&nbsp;player&nbsp;is&nbsp;placing.<br>
+@author&nbsp;Daniel&nbsp;and&nbsp;Saher</tt></dd></dl>
+
+<dl><dt><a name="Battleship-placeShip"><strong>placeShip</strong></a>(self, effectiveX, effectiveY, P1Placing, P2Placing, ship)</dt><dd><tt>@pre&nbsp;game&nbsp;is&nbsp;running&nbsp;and&nbsp;one&nbsp;of&nbsp;the&nbsp;players&nbsp;is&nbsp;placing<br>
+@post&nbsp;ship&nbsp;is&nbsp;placed&nbsp;on&nbsp;grid<br>
+@param&nbsp;effectiveX/Y&nbsp;are&nbsp;the&nbsp;converted&nbsp;mouse&nbsp;inputs.&nbsp;P1/P2Placing&nbsp;indicates&nbsp;which&nbsp;player's&nbsp;turn&nbsp;it&nbsp;is.&nbsp;Ship&nbsp;is&nbsp;the&nbsp;ship&nbsp;to&nbsp;be&nbsp;placed<br>
+@author&nbsp;Daniel</tt></dd></dl>
+
+<dl><dt><a name="Battleship-rotateDirVec"><strong>rotateDirVec</strong></a>(self)</dt><dd><tt>@pre&nbsp;none<br>
+@post&nbsp;rotates&nbsp;the&nbsp;direction&nbsp;vector&nbsp;for&nbsp;placing&nbsp;ships&nbsp;clockwise<br>
+@author&nbsp;Daniel</tt></dd></dl>
+
+<dl><dt><a name="Battleship-run"><strong>run</strong></a>(self)</dt><dd><tt>@pre&nbsp;none<br>
+@post&nbsp;The&nbsp;game&nbsp;starts.&nbsp;The&nbsp;function&nbsp;finishes&nbsp;when&nbsp;the&nbsp;game&nbsp;finishes.<br>
+@author&nbsp;Saher&nbsp;and&nbsp;Daniel</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table>
+</body></html>
